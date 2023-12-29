@@ -1,0 +1,79 @@
+---- Minecraft Crash Report ----
+// Uh... Did I do that?
+
+Time: 29.12.23 18:38
+Description: Initializing game
+
+java.lang.NoClassDefFoundError: org/lwjgl/input/Keyboard
+	at com.mojang.realmsclient.gui.screens.RealmsNotificationsScreen.init(RealmsNotificationsScreen.java:37)
+	at net.minecraft.client.gui.GuiScreenRealmsProxy.initGui(GuiScreenRealmsProxy.java:32)
+	at net.minecraft.client.gui.GuiMainMenu.initGui(GuiMainMenu.java:259)
+	at net.minecraft.client.gui.GuiScreen.setWorldAndResolution(GuiScreen.java:556)
+	at net.minecraft.client.Minecraft.displayGuiScreen(Minecraft.java:1016)
+	at net.minecraft.client.Minecraft.startGame(Minecraft.java:577)
+	at net.minecraft.client.Minecraft.run(Minecraft.java:406)
+	at net.minecraft.client.main.Main.main(Main.java:113)
+	at Start.main(Start.java:7)
+Caused by: java.lang.ClassNotFoundException: org.lwjgl.input.Keyboard
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641)
+	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:526)
+	... 9 more
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Stacktrace:
+	at com.mojang.realmsclient.gui.screens.RealmsNotificationsScreen.init(RealmsNotificationsScreen.java:37)
+	at net.minecraft.client.gui.GuiScreenRealmsProxy.initGui(GuiScreenRealmsProxy.java:32)
+	at net.minecraft.client.gui.GuiMainMenu.initGui(GuiMainMenu.java:259)
+	at net.minecraft.client.gui.GuiScreen.setWorldAndResolution(GuiScreen.java:556)
+	at net.minecraft.client.Minecraft.displayGuiScreen(Minecraft.java:1016)
+	at net.minecraft.client.Minecraft.startGame(Minecraft.java:577)
+
+-- Initialization --
+Details:
+Stacktrace:
+	at net.minecraft.client.Minecraft.run(Minecraft.java:406)
+	at net.minecraft.client.main.Main.main(Main.java:113)
+	at Start.main(Start.java:7)
+
+-- System Details --
+Details:
+	Minecraft Version: 1.8.9
+	Operating System: Windows 10 (amd64) version 10.0
+	Java Version: 21.0.1, Oracle Corporation
+	Java VM Version: Java HotSpot(TM) 64-Bit Server VM (mixed mode, sharing), Oracle Corporation
+	Memory: 950280496 bytes (906 MB) / 3623878656 bytes (3456 MB) up to 17112760320 bytes (16320 MB)
+	JVM Flags: 4 total; -XX:ThreadPriorityPolicy=1 -XX:+UnlockExperimentalVMOptions -XX:+EnableJVMCIProduct -XX:-UnlockExperimentalVMOptions
+	IntCache: cache: 0, tcache: 0, allocated: 0, tallocated: 0
+	Launched Version: better-mcp
+	LWJGL: 3.3.3+5
+	OpenGL: NVIDIA GeForce RTX 2060/PCIe/SSE2 GL version 4.6.0 NVIDIA 546.33, NVIDIA Corporation
+	GL Caps: Using GL 1.3 multitexturing.
+Using GL 1.3 texture combiners.
+Using framebuffer objects because OpenGL 3.0 is supported and separate blending is supported.
+Shaders are available because OpenGL 2.1 is supported.
+VBOs are available because OpenGL 1.5 is supported.
+
+	Using VBOs: No
+	Is Modded: Very likely; Jar signature invalidated
+	Type: Client (map_client.txt)
+	Resource Packs: 
+	Current Language: English (US)
+	Profiler Position: N/A (disabled)
+	CPU: 20x 13th Gen Intel(R) Core(TM) i5-13600K
+	OptiFine Version: OptiFine_1.8.9_HD_U_M5
+	OptiFine Build: ~~NULL~~
+	Render Distance Chunks: 8
+	Mipmaps: 4
+	Anisotropic Filtering: 1
+	Antialiasing: 0
+	Multitexture: false
+	Shaders: null
+	OpenGlVersion: 4.6.0 NVIDIA 546.33
+	OpenGlRenderer: NVIDIA GeForce RTX 2060/PCIe/SSE2
+	OpenGlVendor: NVIDIA Corporation
+	CpuCount: 20
