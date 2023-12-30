@@ -8,7 +8,7 @@ import java.security.Key;
 
 public class ExampleModule extends ModuleFeature {
 
-    protected ExampleModule() {
+    public ExampleModule() {
         super(new ModuleData("ExampleModule", "A module used as an example", ModuleCategory.FUN),
                 new BindableData(Keyboard.KEY_K), null);
     }

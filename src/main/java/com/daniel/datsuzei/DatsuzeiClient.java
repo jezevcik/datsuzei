@@ -8,8 +8,10 @@ import com.daniel.datsuzei.util.logger.NamedLogger;
 import com.github.jezevcik.eventbus.bus.Bus;
 import com.github.jezevcik.eventbus.bus.impl.EventBus;
 import lombok.Getter;
+import org.lwjglx.opengl.Display;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.*;
 
@@ -63,7 +65,8 @@ public final class DatsuzeiClient implements MinecraftClient {
                 logger.info("Waiting for client launch task to finish...");
             }
             // Check if the async launch has encountered an error, and if so crash
-            if(clientLaunchTask.get() != 0) {
+            int errorCode = clientLaunchTask.get();
+            if(errorCode != 0) {
                 throw new RuntimeException(STR."The client encountered an error in the async launch method. Error code is \{clientLaunchTask.get()}");
             } else {
                 logger.info("Async launch finished successfully");
@@ -71,6 +74,9 @@ public final class DatsuzeiClient implements MinecraftClient {
 
             // Log the fact that the post-minecraft initializations have started
             logger.info("Starting Datsuzei Client's post-minecraft launch");
+
+            // Fetch latest contributors from GitHub and set the window title, put in post minecraft to make sure it doesn't get overwritten
+            Display.setTitle(STR."\{NAME} v\{VERSION} \{errorCode == 0 ? "" : STR." - Loaded with error code \{errorCode}"}");
 
             // Initialize managers
             try {
