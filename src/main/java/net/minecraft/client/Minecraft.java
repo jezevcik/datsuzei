@@ -1,5 +1,6 @@
 package net.minecraft.client;
 
+import com.daniel.datsuzei.DatsuzeiClient;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -399,6 +400,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     public void run()
     {
+        DatsuzeiClient.getSingleton().onPreMinecraftStart();
         this.running = true;
 
         try
@@ -566,6 +568,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         GlStateManager.viewport(0, 0, this.displayWidth, this.displayHeight);
         this.effectRenderer = new EffectRenderer(this.theWorld, this.renderEngine);
         this.checkGLError("Post startup");
+        DatsuzeiClient.getSingleton().onPostMinecraftStart();
         this.ingameGUI = new GuiIngame(this);
 
         if (this.serverName != null)
@@ -1050,6 +1053,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     {
         try
         {
+            DatsuzeiClient.getSingleton().onStop();
             this.stream.shutdownStream();
             logger.info("Stopping!");
 
