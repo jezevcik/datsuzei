@@ -1,6 +1,7 @@
 package net.minecraft.client;
 
 import com.daniel.datsuzei.DatsuzeiClient;
+import com.daniel.datsuzei.event.impl.KeyPressEvent;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -1947,6 +1948,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                     }
                     else
                     {
+                        DatsuzeiClient.getSingleton().getEventBus().post(new KeyPressEvent(k));
                         if (k == 1)
                         {
                             this.displayInGameMenu();

@@ -10,20 +10,27 @@ import java.util.*;
 
 @RequiredArgsConstructor
 public class Manager<T extends Feature> implements MinecraftClient {
+    protected final Map<String, T> map = new TreeMap<>();
     private final List<Class<T>> classes = new ArrayList<>();
-    private final Map<String, T> map = new TreeMap<>();
     private final Class<T> mainType;
+
+    public Manager() {
+        this(null);
+    }
 
     @SuppressWarnings("unchecked")
     public void preMinecraftLaunch() {
-        // Use reflection to discover and instantiate all feature subclasses in the "com.daniel.datsuzei" package
-        final Reflections reflections = new Reflections("com.daniel.datsuzei");
-        reflections.getSubTypesOf(mainType).forEach(featureClass -> {
-            // Add the class to a list, to be instantiated after Minecraft has launcher
-            classes.add((Class<T>) featureClass);
-        });
-        // Log the amount of found classes
-        DatsuzeiClient.getSingleton().getLogger().info(STR."Loaded \{classes.size()} subtypes of \{mainType.getSimpleName()}");
+        // The main type will be null if this is not a manager that's to be handled this way
+        if(mainType != null) {
+            // Use reflection to discover and instantiate all feature subclasses in the "com.daniel.datsuzei" package
+            final Reflections reflections = new Reflections("com.daniel.datsuzei");
+            reflections.getSubTypesOf(mainType).forEach(featureClass -> {
+                // Add the class to a list, to be instantiated after Minecraft has launcher
+                classes.add((Class<T>) featureClass);
+            });
+            // Log the amount of found classes
+            DatsuzeiClient.getSingleton().getLogger().info(STR."Loaded \{classes.size()} subtypes of \{mainType.getSimpleName()}");
+        }
     }
 
     public void postMinecraftLaunch() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
@@ -39,6 +46,10 @@ public class Manager<T extends Feature> implements MinecraftClient {
 
     public final Collection<T> getFeatures() {
         return map.values();
+    }
+
+    protected void add(String name, T type) {
+        this.map.put(name, type);
     }
 
 }

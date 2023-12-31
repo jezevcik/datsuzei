@@ -1,5 +1,7 @@
 package net.minecraft.client.gui;
 
+import com.daniel.datsuzei.DatsuzeiClient;
+import com.daniel.datsuzei.event.impl.Render2DEvent;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -360,6 +362,7 @@ public class GuiIngame extends Gui
             this.overlayPlayerList.updatePlayerList(false);
         }
 
+        DatsuzeiClient.getSingleton().getEventBus().post(new Render2DEvent(scaledresolution, partialTicks));
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.disableLighting();
         GlStateManager.enableAlpha();

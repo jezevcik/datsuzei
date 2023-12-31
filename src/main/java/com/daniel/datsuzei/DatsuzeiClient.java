@@ -1,8 +1,8 @@
 package com.daniel.datsuzei;
 
 import com.daniel.datsuzei.event.Event;
-import com.daniel.datsuzei.feature.Manager;
-import com.daniel.datsuzei.module.ModuleFeature;
+import com.daniel.datsuzei.font.FontManager;
+import com.daniel.datsuzei.module.ModuleManager;
 import com.daniel.datsuzei.util.interfaces.MinecraftClient;
 import com.daniel.datsuzei.util.logger.NamedLogger;
 import com.github.jezevcik.eventbus.bus.Bus;
@@ -11,9 +11,11 @@ import lombok.Getter;
 import org.lwjglx.opengl.Display;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Getter
 public final class DatsuzeiClient implements MinecraftClient {
@@ -21,16 +23,23 @@ public final class DatsuzeiClient implements MinecraftClient {
     public static final String NAME = "Datsuzei";
     public static final String VERSION = "1.0.0";
 
-    public static volatile DatsuzeiClient datsuzeiClient;
+    private static volatile DatsuzeiClient datsuzeiClient;
 
     private final Bus<Event> eventBus = new EventBus<>();
     private final NamedLogger logger = new NamedLogger(NAME);
     private final File directory = new File(mc.mcDataDir, NAME);
     private final ExecutorService threadpool = Executors.newCachedThreadPool();
 
+    // Launching client
     private Future<Integer> clientLaunchTask;
+    private long lastPrintOut;
 
-    private final Manager<ModuleFeature> moduleManager = new Manager<>(ModuleFeature.class);
+    // Specialized managers
+    private final FontManager fontManager = new FontManager();
+    private final ModuleManager moduleManager = new ModuleManager();
+
+    // Generic managers
+    // None atm.
 
     public void onPreMinecraftStart() {
         // The pre minecraft launch doesn't depend on Minecraft's components, therefore it can run asynchronously
@@ -46,6 +55,7 @@ public final class DatsuzeiClient implements MinecraftClient {
 
             // Initialize managers
             try {
+                fontManager.preMinecraftLaunch();
                 moduleManager.preMinecraftLaunch();
             } catch (Exception e) {
                 // Report error and return if the initialization has failed
@@ -62,7 +72,10 @@ public final class DatsuzeiClient implements MinecraftClient {
         try {
             // Make sure that the async launch is finished before continuing
             while (!clientLaunchTask.isDone()) {
-                logger.info("Waiting for client launch task to finish...");
+                if(System.currentTimeMillis() - lastPrintOut >= 750 || lastPrintOut == 0) {
+                    logger.info("Waiting for client launch task to finish...");
+                    lastPrintOut = System.currentTimeMillis();
+                }
             }
             // Check if the async launch has encountered an error, and if so crash
             int errorCode = clientLaunchTask.get();
@@ -80,6 +93,7 @@ public final class DatsuzeiClient implements MinecraftClient {
 
             // Initialize managers
             try {
+                fontManager.postMinecraftLaunch();
                 moduleManager.postMinecraftLaunch();
             } catch (NoSuchMethodException | InstantiationException | InvocationTargetException |
                      IllegalAccessException e) {
@@ -97,6 +111,7 @@ public final class DatsuzeiClient implements MinecraftClient {
     public static DatsuzeiClient getSingleton() {
         if(datsuzeiClient == null)
             datsuzeiClient = new DatsuzeiClient();
+
         return datsuzeiClient;
     }
 
