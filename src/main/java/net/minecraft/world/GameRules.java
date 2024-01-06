@@ -6,7 +6,8 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class GameRules
 {
-    private TreeMap<String, GameRules.Value> theGameRules = new TreeMap();
+    private TreeMap theGameRules = new TreeMap();
+    private static final String __OBFID = "CL_00000136";
 
     public GameRules()
     {
@@ -77,10 +78,10 @@ public class GameRules
     {
         NBTTagCompound nbttagcompound = new NBTTagCompound();
 
-        for (String s : this.theGameRules.keySet())
+        for (Object s : this.theGameRules.keySet())
         {
             GameRules.Value gamerules$value = (GameRules.Value)this.theGameRules.get(s);
-            nbttagcompound.setString(s, gamerules$value.getString());
+            nbttagcompound.setString((String) s, gamerules$value.getString());
         }
 
         return nbttagcompound;
@@ -103,7 +104,7 @@ public class GameRules
      */
     public String[] getRules()
     {
-        Set<String> set = this.theGameRules.keySet();
+        Set set = this.theGameRules.keySet();
         return (String[])((String[])set.toArray(new String[set.size()]));
     }
 
@@ -128,6 +129,7 @@ public class GameRules
         private int valueInteger;
         private double valueDouble;
         private final GameRules.ValueType type;
+        private static final String __OBFID = "CL_00000137";
 
         public Value(String value, GameRules.ValueType type)
         {
@@ -199,8 +201,15 @@ public class GameRules
 
     public static enum ValueType
     {
-        ANY_VALUE,
-        BOOLEAN_VALUE,
-        NUMERICAL_VALUE;
+        ANY_VALUE("ANY_VALUE", 0),
+        BOOLEAN_VALUE("BOOLEAN_VALUE", 1),
+        NUMERICAL_VALUE("NUMERICAL_VALUE", 2);
+
+        private static final GameRules.ValueType[] $VALUES = new GameRules.ValueType[]{ANY_VALUE, BOOLEAN_VALUE, NUMERICAL_VALUE};
+        private static final String __OBFID = "CL_00002151";
+
+        private ValueType(String p_i19_3_, int p_i19_4_)
+        {
+        }
     }
 }

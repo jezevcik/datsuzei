@@ -71,10 +71,7 @@ public class BlockBanner extends BlockContainer
         return false;
     }
 
-    /**
-     * Return true if an entity can be spawned inside the block (used to get the player's bed spawn location)
-     */
-    public boolean canSpawnInBlock()
+    public boolean func_181623_g()
     {
         return true;
     }
@@ -127,7 +124,7 @@ public class BlockBanner extends BlockContainer
 
     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
     {
-        return !this.hasInvalidNeighbor(worldIn, pos) && super.canPlaceBlockAt(worldIn, pos);
+        return !this.func_181087_e(worldIn, pos) && super.canPlaceBlockAt(worldIn, pos);
     }
 
     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te)
@@ -137,7 +134,7 @@ public class BlockBanner extends BlockContainer
             TileEntityBanner tileentitybanner = (TileEntityBanner)te;
             ItemStack itemstack = new ItemStack(Items.banner, 1, ((TileEntityBanner)te).getBaseColor());
             NBTTagCompound nbttagcompound = new NBTTagCompound();
-            TileEntityBanner.setBaseColorAndPatterns(nbttagcompound, tileentitybanner.getBaseColor(), tileentitybanner.getPatterns());
+            TileEntityBanner.func_181020_a(nbttagcompound, tileentitybanner.getBaseColor(), tileentitybanner.func_181021_d());
             itemstack.setTagInfo("BlockEntityTag", nbttagcompound);
             spawnAsEntity(worldIn, pos, itemstack);
         }

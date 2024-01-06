@@ -21,14 +21,14 @@ public class SaveFormatOld implements ISaveFormat
      */
     protected final File savesDirectory;
 
-    public SaveFormatOld(File savesDirectoryIn)
+    public SaveFormatOld(File p_i2147_1_)
     {
-        if (!savesDirectoryIn.exists())
+        if (!p_i2147_1_.exists())
         {
-            savesDirectoryIn.mkdirs();
+            p_i2147_1_.mkdirs();
         }
 
-        this.savesDirectory = savesDirectoryIn;
+        this.savesDirectory = p_i2147_1_;
     }
 
     /**
@@ -139,9 +139,9 @@ public class SaveFormatOld implements ISaveFormat
         }
     }
 
-    public boolean isNewLevelIdAcceptable(String saveName)
+    public boolean func_154335_d(String p_154335_1_)
     {
-        File file1 = new File(this.savesDirectory, saveName);
+        File file1 = new File(this.savesDirectory, p_154335_1_);
 
         if (file1.exists())
         {
@@ -166,12 +166,10 @@ public class SaveFormatOld implements ISaveFormat
     /**
      * @args: Takes one argument - the name of the directory of the world to delete. @desc: Delete the world by deleting
      * the associated directory recursively.
-     *  
-     * @param saveName The current save's name
      */
-    public boolean deleteWorldDirectory(String saveName)
+    public boolean deleteWorldDirectory(String p_75802_1_)
     {
-        File file1 = new File(this.savesDirectory, saveName);
+        File file1 = new File(this.savesDirectory, p_75802_1_);
 
         if (!file1.exists())
         {
@@ -179,7 +177,7 @@ public class SaveFormatOld implements ISaveFormat
         }
         else
         {
-            logger.info("Deleting level " + saveName);
+            logger.info("Deleting level " + p_75802_1_);
 
             for (int i = 1; i <= 5; ++i)
             {
@@ -244,7 +242,7 @@ public class SaveFormatOld implements ISaveFormat
         return new SaveHandler(this.savesDirectory, saveName, storePlayerdata);
     }
 
-    public boolean isConvertible(String saveName)
+    public boolean func_154334_a(String saveName)
     {
         return false;
     }
@@ -267,12 +265,10 @@ public class SaveFormatOld implements ISaveFormat
 
     /**
      * Return whether the given world can be loaded.
-     *  
-     * @param saveName The current save's name
      */
-    public boolean canLoadWorld(String saveName)
+    public boolean canLoadWorld(String p_90033_1_)
     {
-        File file1 = new File(this.savesDirectory, saveName);
+        File file1 = new File(this.savesDirectory, p_90033_1_);
         return file1.isDirectory();
     }
 }

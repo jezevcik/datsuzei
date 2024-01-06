@@ -257,6 +257,7 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
     /**
      * Typically "menu.convertingLevel", "menu.loadingLevel" or others.
      */
+
     protected synchronized void setUserMessage(String message)
     {
         this.userMessage = message;
@@ -267,13 +268,13 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
         return this.userMessage;
     }
 
-    protected void loadAllWorlds(String saveName, String worldNameIn, long seed, WorldType type, String worldNameIn2)
+    protected void loadAllWorlds(String p_71247_1_, String p_71247_2_, long seed, WorldType type, String p_71247_6_)
     {
-        this.convertMapIfNeeded(saveName);
+        this.convertMapIfNeeded(p_71247_1_);
         this.setUserMessage("menu.loadingLevel");
         this.worldServers = new WorldServer[3];
         this.timeOfLastDimensionTick = new long[this.worldServers.length][100];
-        ISaveHandler isavehandler = this.anvilConverterForAnvilFile.getSaveLoader(saveName, true);
+        ISaveHandler isavehandler = this.anvilConverterForAnvilFile.getSaveLoader(p_71247_1_, true);
         this.setResourcePackFromWorld(this.getFolderName(), isavehandler);
         WorldInfo worldinfo = isavehandler.loadWorldInfo();
         WorldSettings worldsettings;
@@ -287,7 +288,7 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
             else
             {
                 worldsettings = new WorldSettings(seed, this.getGameType(), this.canStructuresSpawn(), this.isHardcore(), type);
-                worldsettings.setWorldName(worldNameIn2);
+                worldsettings.setWorldName(p_71247_6_);
 
                 if (this.enableBonusChest)
                 {
@@ -295,11 +296,11 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
                 }
             }
 
-            worldinfo = new WorldInfo(worldsettings, worldNameIn);
+            worldinfo = new WorldInfo(worldsettings, p_71247_2_);
         }
         else
         {
-            worldinfo.setWorldName(worldNameIn);
+            worldinfo.setWorldName(p_71247_2_);
             worldsettings = new WorldSettings(worldinfo);
         }
 
@@ -408,15 +409,9 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
 
     public abstract int getOpPermissionLevel();
 
-    /**
-     * Get if RCON command events should be broadcast to ops
-     */
-    public abstract boolean shouldBroadcastRconToOps();
+    public abstract boolean func_181034_q();
 
-    /**
-     * Get if console command events should be broadcast to ops
-     */
-    public abstract boolean shouldBroadcastConsoleToOps();
+    public abstract boolean func_183002_r();
 
     /**
      * Used to display a percent remaining given text and the percentage.
@@ -533,7 +528,7 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
                 this.currentTime = getCurrentTimeMillis();
                 long i = 0L;
                 this.statusResponse.setServerDescription(new ChatComponentText(this.motd));
-                this.statusResponse.setProtocolVersionInfo(new ServerStatusResponse.MinecraftProtocolVersionIdentifier("1.8.9", 47));
+                this.statusResponse.setProtocolVersionInfo(new ServerStatusResponse.MinecraftProtocolVersionIdentifier("1.8.8", 47));
                 this.addFaviconToStatusResponse(this.statusResponse);
 
                 while (this.serverRunning)
@@ -699,7 +694,7 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
 
             for (int k = 0; k < agameprofile.length; ++k)
             {
-                agameprofile[k] = ((EntityPlayerMP)this.serverConfigManager.getPlayerList().get(j + k)).getGameProfile();
+                agameprofile[k] = ((EntityPlayerMP)this.serverConfigManager.func_181057_v().get(j + k)).getGameProfile();
             }
 
             Collections.shuffle(Arrays.asList(agameprofile));
@@ -741,7 +736,7 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
         {
             while (!this.futureTaskQueue.isEmpty())
             {
-                Util.runTask((FutureTask)this.futureTaskQueue.poll(), logger);
+                Util.func_181617_a((FutureTask)this.futureTaskQueue.poll(), logger);
             }
         }
 
@@ -851,7 +846,7 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
      */
     public String getMinecraftVersion()
     {
-        return "1.8.9";
+        return "1.8.8";
     }
 
     /**
@@ -910,7 +905,7 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
             {
                 public String call()
                 {
-                    return MinecraftServer.this.serverConfigManager.getCurrentPlayerCount() + " / " + MinecraftServer.this.serverConfigManager.getMaxPlayers() + "; " + MinecraftServer.this.serverConfigManager.getPlayerList();
+                    return MinecraftServer.this.serverConfigManager.getCurrentPlayerCount() + " / " + MinecraftServer.this.serverConfigManager.getMaxPlayers() + "; " + MinecraftServer.this.serverConfigManager.func_181057_v();
                 }
             });
         }
@@ -976,7 +971,7 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
     }
 
     /**
-     * Get the name of this object. For players this returns their username
+     * Gets the name of this command sender (usually username, but possibly "Rcon")
      */
     public String getName()
     {
@@ -1240,11 +1235,7 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
         return this.canSpawnNPCs;
     }
 
-    /**
-     * Get if native transport should be used. Native transport means linux server performance improvements and
-     * optimized packet sending/receiving on linux
-     */
-    public abstract boolean shouldUseNativeTransport();
+    public abstract boolean func_181035_ah();
 
     public void setCanSpawnNPCs(boolean spawnNpcs)
     {

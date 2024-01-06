@@ -7,6 +7,7 @@ import org.apache.ant.compress.taskdefs.Unzip;
 
 import java.awt.*;
 import java.io.*;
+import java.util.Map;
 import java.util.Objects;
 
 public class FontManager extends Manager<ClientFontRenderer> {
@@ -21,7 +22,7 @@ public class FontManager extends Manager<ClientFontRenderer> {
         // Check if the font directory exists, but is not a directory and if so delete it
         if(fontDirectory.exists() && !fontDirectory.isDirectory())
             if(!fontDirectory.delete())
-                throw new RuntimeException(STR."Cannot delete font directory which is not a directory");
+                throw new RuntimeException(STR."Cannot delete the file in place of the font directory");
 
         // If the font directory does not exist, download the font archive stored on cloud
         if(!fontDirectory.exists()) {
@@ -46,12 +47,12 @@ public class FontManager extends Manager<ClientFontRenderer> {
                     throw new RuntimeException("Downloaded fonts file does not exist");
                 }
             } catch (IOException exception) {
-                DatsuzeiClient.getSingleton().getLogger().error("Input/Output exception when downloading and unpacking fonts archive:", exception);
+                DatsuzeiClient.getSingleton().getLogger().error("Input/Output exception when downloading and unpacking Fonts.zip:", exception);
             }
         }
     }
 
-    public void add(String family, String type, float size) throws IOException, FontFormatException {
+    public ClientFontRenderer add(String family, String type, float size) throws IOException, FontFormatException {
         // Create the file object for the family directory
         final File familyDirectory = new File(fontDirectory, family);
         // Create the directory if it does not exist
@@ -59,7 +60,7 @@ public class FontManager extends Manager<ClientFontRenderer> {
             // Set up file objects for possible .ttf font and .otf font
             final File ttfFile = new File(familyDirectory, type + ".ttf");
             final File otfFile = new File(familyDirectory, type + ".otf");
-            // Check which file type exists, and if none throw an exception
+            // Check which file type exists, and if none exist, throw an exception
             File fontFile;
             if (ttfFile.exists())
                 fontFile = ttfFile;
@@ -72,9 +73,11 @@ public class FontManager extends Manager<ClientFontRenderer> {
                 // Create the font object from the input stream, and derive it from the selected size
                 final Font finalFont = Font.createFont(Font.PLAIN, in).deriveFont(size);
                 // Create the client font renderer object
-                final ClientFontRenderer finalFontRenderer = new ClientFontRenderer(family, type, size, finalFont);
+                final ClientFontRenderer finalFontRenderer = new ClientFontRenderer(family, type, size, finalFont, false);
                 // Add the created font renderer to the map
                 this.add(finalFontRenderer.getName(), finalFontRenderer);
+                // Return the final font renderer
+                return finalFontRenderer;
             } catch (Exception e) {
                 // Throw an error if there was a problem creating the input stream
                 DatsuzeiClient.getSingleton().getLogger().error(STR."There was an error finding the font \{ family } \{ type } \{ size }");
@@ -95,16 +98,17 @@ public class FontManager extends Manager<ClientFontRenderer> {
     public ClientFontRenderer get(String family, String type, float size) {
         try {
             String name = STR. "\{ family }-\{ type }-\{ size }";
-            return Objects.requireNonNull(this.map.entrySet().stream().filter(entry -> entry.getKey().equals(name)).findFirst().orElseGet(() -> {
-                DatsuzeiClient.getSingleton().getLogger().info(STR. "Font \{ family }-\{ type } \{ size } does not exist, creating now" );
+            if(this.map.containsKey(name)) {
+                return this.map.get(name);
+            } else {
                 try {
-                    add(family, type, size);
-                    return this.map.entrySet().stream().filter(entry -> entry.getKey().equals(name)).findFirst().orElse(null);
+                    DatsuzeiClient.getSingleton().getLogger().info(STR. "Font \{ family }-\{ type } \{ size } does not exist, creating now" );
+                    return add(family, type, size);
                 } catch (Exception e2) {
                     DatsuzeiClient.getSingleton().getLogger().error(STR. "Failed to create font \{ family }-\{ type } \{ size }:" , e2);
                     return null;
                 }
-            })).getValue();
+            }
         } catch (Exception e) {
             DatsuzeiClient.getSingleton().getLogger().error("There was an error iterating over font map:", e);
             return null;

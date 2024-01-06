@@ -56,30 +56,30 @@ public abstract class EntityMinecart extends Entity implements IWorldNameable
         this.setSize(0.98F, 0.7F);
     }
 
-    public static EntityMinecart getMinecart(World worldIn, double x, double y, double z, EntityMinecart.EnumMinecartType type)
+    public static EntityMinecart func_180458_a(World worldIn, double p_180458_1_, double p_180458_3_, double p_180458_5_, EntityMinecart.EnumMinecartType p_180458_7_)
     {
-        switch (type)
+        switch (p_180458_7_)
         {
             case CHEST:
-                return new EntityMinecartChest(worldIn, x, y, z);
+                return new EntityMinecartChest(worldIn, p_180458_1_, p_180458_3_, p_180458_5_);
 
             case FURNACE:
-                return new EntityMinecartFurnace(worldIn, x, y, z);
+                return new EntityMinecartFurnace(worldIn, p_180458_1_, p_180458_3_, p_180458_5_);
 
             case TNT:
-                return new EntityMinecartTNT(worldIn, x, y, z);
+                return new EntityMinecartTNT(worldIn, p_180458_1_, p_180458_3_, p_180458_5_);
 
             case SPAWNER:
-                return new EntityMinecartMobSpawner(worldIn, x, y, z);
+                return new EntityMinecartMobSpawner(worldIn, p_180458_1_, p_180458_3_, p_180458_5_);
 
             case HOPPER:
-                return new EntityMinecartHopper(worldIn, x, y, z);
+                return new EntityMinecartHopper(worldIn, p_180458_1_, p_180458_3_, p_180458_5_);
 
             case COMMAND_BLOCK:
-                return new EntityMinecartCommandBlock(worldIn, x, y, z);
+                return new EntityMinecartCommandBlock(worldIn, p_180458_1_, p_180458_3_, p_180458_5_);
 
             default:
-                return new EntityMinecartEmpty(worldIn, x, y, z);
+                return new EntityMinecartEmpty(worldIn, p_180458_1_, p_180458_3_, p_180458_5_);
         }
     }
 
@@ -192,7 +192,7 @@ public abstract class EntityMinecart extends Entity implements IWorldNameable
         }
     }
 
-    public void killMinecart(DamageSource source)
+    public void killMinecart(DamageSource p_94095_1_)
     {
         this.setDead();
 
@@ -366,7 +366,7 @@ public abstract class EntityMinecart extends Entity implements IWorldNameable
 
             if (d0 * d0 + d2 * d2 > 0.001D)
             {
-                this.rotationYaw = (float)(MathHelper.atan2(d2, d0) * 180.0D / Math.PI);
+                this.rotationYaw = (float)(MathHelper.func_181159_b(d2, d0) * 180.0D / Math.PI);
 
                 if (this.isInReverse)
                 {
@@ -1093,7 +1093,7 @@ public abstract class EntityMinecart extends Entity implements IWorldNameable
     }
 
     /**
-     * Get the name of this object. For players this returns their username
+     * Gets the name of this command sender (usually username, but possibly "Rcon")
      */
     public String getName()
     {

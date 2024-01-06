@@ -26,18 +26,18 @@ public abstract class EntityMinecartContainer extends EntityMinecart implements 
         super(worldIn);
     }
 
-    public EntityMinecartContainer(World worldIn, double x, double y, double z)
+    public EntityMinecartContainer(World worldIn, double p_i1717_2_, double p_i1717_4_, double p_i1717_6_)
     {
-        super(worldIn, x, y, z);
+        super(worldIn, p_i1717_2_, p_i1717_4_, p_i1717_6_);
     }
 
-    public void killMinecart(DamageSource source)
+    public void killMinecart(DamageSource p_94095_1_)
     {
-        super.killMinecart(source);
+        super.killMinecart(p_94095_1_);
 
         if (this.worldObj.getGameRules().getBoolean("doEntityDrops"))
         {
-            InventoryHelper.dropInventoryItems(this.worldObj, this, this);
+            InventoryHelper.func_180176_a(this.worldObj, this, this);
         }
     }
 
@@ -143,7 +143,7 @@ public abstract class EntityMinecartContainer extends EntityMinecart implements 
     }
 
     /**
-     * Get the name of this object. For players this returns their username
+     * Gets the name of this command sender (usually username, but possibly "Rcon")
      */
     public String getName()
     {
@@ -174,7 +174,7 @@ public abstract class EntityMinecartContainer extends EntityMinecart implements 
     {
         if (this.dropContentsWhenDead)
         {
-            InventoryHelper.dropInventoryItems(this.worldObj, this, this);
+            InventoryHelper.func_180176_a(this.worldObj, this, this);
         }
 
         super.setDead();

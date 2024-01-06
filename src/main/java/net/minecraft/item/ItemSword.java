@@ -34,15 +34,15 @@ public class ItemSword extends Item
         return this.material.getDamageVsEntity();
     }
 
-    public float getStrVsBlock(ItemStack stack, Block state)
+    public float getStrVsBlock(ItemStack stack, Block block)
     {
-        if (state == Blocks.web)
+        if (block == Blocks.web)
         {
             return 15.0F;
         }
         else
         {
-            Material material = state.getMaterial();
+            Material material = block.getMaterial();
             return material != Material.plants && material != Material.vine && material != Material.coral && material != Material.leaves && material != Material.gourd ? 1.0F : 1.5F;
         }
     }

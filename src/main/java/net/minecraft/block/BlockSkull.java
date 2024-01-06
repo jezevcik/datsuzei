@@ -129,9 +129,6 @@ public class BlockSkull extends BlockContainer
         return Items.skull;
     }
 
-    /**
-     * Gets the meta to use for the Pick Block ItemStack result
-     */
     public int getDamageValue(World worldIn, BlockPos pos)
     {
         TileEntity tileentity = worldIn.getTileEntity(pos);

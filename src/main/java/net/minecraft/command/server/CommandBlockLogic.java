@@ -167,7 +167,7 @@ public abstract class CommandBlockLogic implements ICommandSender
     }
 
     /**
-     * Get the name of this object. For players this returns their username
+     * Gets the name of this command sender (usually username, but possibly "Rcon")
      */
     public String getName()
     {
@@ -210,7 +210,7 @@ public abstract class CommandBlockLogic implements ICommandSender
 
     public void setCommandStat(CommandResultStats.Type type, int amount)
     {
-        this.resultStats.setCommandStatScore(this, type, amount);
+        this.resultStats.func_179672_a(this, type, amount);
     }
 
     public abstract void updateCommand();

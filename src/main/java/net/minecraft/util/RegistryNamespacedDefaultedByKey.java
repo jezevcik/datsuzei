@@ -12,19 +12,19 @@ public class RegistryNamespacedDefaultedByKey<K, V> extends RegistryNamespaced<K
      */
     private V defaultValue;
 
-    public RegistryNamespacedDefaultedByKey(K defaultValueKeyIn)
+    public RegistryNamespacedDefaultedByKey(K p_i46017_1_)
     {
-        this.defaultValueKey = defaultValueKeyIn;
+        this.defaultValueKey = p_i46017_1_;
     }
 
-    public void register(int id, K key, V value)
+    public void register(int id, K p_177775_2_, V p_177775_3_)
     {
-        if (this.defaultValueKey.equals(key))
+        if (this.defaultValueKey.equals(p_177775_2_))
         {
-            this.defaultValue = value;
+            this.defaultValue = p_177775_3_;
         }
 
-        super.register(id, key, value);
+        super.register(id, p_177775_2_, p_177775_3_);
     }
 
     /**

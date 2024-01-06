@@ -3,6 +3,7 @@ package com.daniel.datsuzei.font;
 import com.daniel.datsuzei.DatsuzeiClient;
 import com.daniel.datsuzei.feature.Feature;
 import com.daniel.datsuzei.util.interfaces.MinecraftClient;
+import com.daniel.datsuzei.util.math.MathUtil;
 import com.daniel.datsuzei.util.render.font.FontCharacter;
 import com.daniel.datsuzei.util.render.gl.GLUtil;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
@@ -29,17 +31,21 @@ public class ClientFontRenderer extends FontRenderer implements MinecraftClient,
     private static final float SCALE_INVERSE = 1 / SCALE;
     private static final char COLOR_INVOKER = '\247';
     private static final int[] COLOR_CODES = new int[32];
-    //private static final int LATIN_MAX_AMOUNT = 256;
-    private static final int INTERNATIONAL_MAX_AMOUNT = 65535;
+    private static final int LATIN_START = 0, LATIN_END = 255,
+            CJK_START = 11904, CJK_END = 40959;
+
+    private static final int INT_MAX_AMOUNT = 65535; /*MathUtil.max(LATIN_START, LATIN_END, KATAKANA_START, KATAKANA_END, HIRAGANA_START, HIRAGANA_END);*/
     private static final int MARGIN_WIDTH = 4;
     private static final int MASK = 0xFF;
 
     private final Font font;
     private final boolean fractionalMetrics;
     private final float fontHeight;
-    private final FontCharacter[] defaultCharacters = new FontCharacter[INTERNATIONAL_MAX_AMOUNT];
-    private final FontCharacter[] boldCharacters = new FontCharacter[INTERNATIONAL_MAX_AMOUNT];
+    private final FontCharacter[] defaultCharacters = new FontCharacter[40959];
+    private final FontCharacter[] boldCharacters = new FontCharacter[40959];
     private boolean antialiasing = true;
+
+    private final boolean allowCJK;
 
     @Getter
     private final String family, type;
@@ -59,6 +65,7 @@ public class ClientFontRenderer extends FontRenderer implements MinecraftClient,
         this.size = size;
         this.antialiasing = antialiasing;
         this.font = font;
+        this.allowCJK = font.canDisplay(DatsuzeiClient.JP_NAME.charAt(0));
         this.fractionalMetrics = fractionalMetrics;
         this.fontHeight = (float) (font.getStringBounds(ALPHABET, new FontRenderContext(new AffineTransform(), antialiasing, fractionalMetrics)).getHeight() / 2);
         this.fillCharacters(this.defaultCharacters, Font.PLAIN);
@@ -72,11 +79,12 @@ public class ClientFontRenderer extends FontRenderer implements MinecraftClient,
         this.type = type;
         this.size = size;
         this.font = font;
+        this.allowCJK = font.canDisplay(DatsuzeiClient.JP_NAME.charAt(0));
         this.fractionalMetrics = fractionalMetrics;
         this.fontHeight = (float) (font.getStringBounds(ALPHABET, new FontRenderContext(new AffineTransform(), true, fractionalMetrics)).getHeight() / 2);
         this.fillCharacters(this.defaultCharacters, Font.PLAIN);
         this.fillCharacters(this.boldCharacters, Font.BOLD);
-        this.FONT_HEIGHT = (int) getHeight();
+        this.FONT_HEIGHT = (int) fontHeight;
     }
 
     public static void calculateColorCodes() {
@@ -113,8 +121,13 @@ public class ClientFontRenderer extends FontRenderer implements MinecraftClient,
         final Graphics2D fontGraphics = (Graphics2D) fontImage.getGraphics();
         final FontMetrics fontMetrics = fontGraphics.getFontMetrics(font);
 
-        for (int i = 0; i < characters.length; ++i) {
-            final char character = (char) i;
+        int[] chars = MathUtil.range(LATIN_START, LATIN_END);
+        if(allowCJK)
+            chars = ArrayUtils.addAll(MathUtil.range(CJK_START, CJK_END), chars);
+
+        for (int i : chars) {
+            final int fixed = Math.max(0, i - 1);
+            final char character = (char) fixed;
             final Rectangle2D charRectangle = fontMetrics.getStringBounds(character + "", fontGraphics);
 
             // Draw the character. This is cached into an OpenGL texture so that this process doesn't need to
@@ -140,7 +153,7 @@ public class ClientFontRenderer extends FontRenderer implements MinecraftClient,
             uploadTexture(charTexture, charImage, width, height);
 
             // Store the completed character back into the provided character array
-            characters[i] = new FontCharacter(charTexture, (float) width, (float) height);
+            characters[fixed] = new FontCharacter(charTexture, (float) width, (float) height);
         }
     }
 
@@ -178,11 +191,37 @@ public class ClientFontRenderer extends FontRenderer implements MinecraftClient,
     }
 
     public int drawCenteredString(final String text, final float x, final float y, final int color) {
-        return drawString(text, x - (getStringWidth(text) >> 1), y, color, false);
+        return drawString(text, x - (float)(this.getStringWidth(text) / 2), y, color, false);
+    }
+
+    public int drawStringWithShadow(String text, float x, float y, int color) {
+        this.drawString(text, x + 0.5F, y + 0.5F, -16777216);
+        return this.drawString(text, x, y, color);
+    }
+    public int drawCenteredStringWithShadow(String text, float x, float y, int color) {
+        this.drawString(text, x - (float)(this.getStringWidth(text) / 2) + 0.5F, y + 0.5F, -16777216);
+        return this.drawString(text, x - (float)(this.getStringWidth(text) / 2), y, color);
+    }
+
+    public int drawTotalCenteredString(String string, float x, float y, int color) {
+        return this.drawString(string, x - (float)(this.getStringWidth(string) / 2), y - (float)(this.fontHeight / 2), color);
+    }
+
+    public int drawTotalCenteredStringWithShadow(String string, float x, float y, int color) {
+        return this.drawStringWithShadow(string, x - (float)(this.getStringWidth(string) / 2), y - (float)(this.fontHeight / 2), color);
     }
 
     @Override
     public int drawString(String text, float x, float y, final int color, final boolean shadow) {
+        if(!allowCJK) {
+            StringBuilder textBuilder = new StringBuilder();
+            for (char c : text.toCharArray()) {
+                if(((int) c) < 256)
+                    textBuilder.append(c);
+            }
+            text = textBuilder.toString();
+        }
+
         y += 2;
         calculateColorCodes();
         FontCharacter[] characterSet = defaultCharacters;
@@ -266,7 +305,7 @@ public class ClientFontRenderer extends FontRenderer implements MinecraftClient,
                         characterSet = boldCharacters;
                     }
                 } else if (characterSet.length > character) {
-                    width += characterSet[character].height() - MARGIN_WIDTH * 2;
+                    width += characterSet[character].width() - MARGIN_WIDTH * 2;
                 }
             }
             previousCharacter = character;

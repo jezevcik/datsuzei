@@ -1,12 +1,13 @@
 package com.daniel.datsuzei.event.impl;
 
 import com.daniel.datsuzei.event.Event;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Getter
-
-@RequiredArgsConstructor
+@Setter
+@AllArgsConstructor
 public class KeyPressEvent extends Event {
-    private final int key;
+    private int key;
 }

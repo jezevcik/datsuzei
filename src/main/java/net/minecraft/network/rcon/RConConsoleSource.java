@@ -19,7 +19,7 @@ public class RConConsoleSource implements ICommandSender
     private StringBuffer buffer = new StringBuffer();
 
     /**
-     * Get the name of this object. For players this returns their username
+     * Gets the name of this command sender (usually username, but possibly "Rcon")
      */
     public String getName()
     {

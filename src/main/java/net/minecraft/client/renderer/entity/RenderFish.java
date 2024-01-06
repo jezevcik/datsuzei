@@ -20,7 +20,10 @@ public class RenderFish extends Render<EntityFishHook>
     }
 
     /**
-     * Renders the desired {@code T} type Entity.
+     * Actually renders the given argument. This is a synthetic bridge method, always casting down its argument and then
+     * handing it off to a worker function which does the actual work. In all probabilty, the class Render is generic
+     * (Render<T extends Entity>) and this method has signature public void doRender(T entity, double d, double d1,
+     * double d2, float f, float f1). But JAD is pre 1.5 so doe
      */
     public void doRender(EntityFishHook entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
@@ -65,7 +68,7 @@ public class RenderFish extends Render<EntityFishHook>
             double d2 = entity.angler.prevPosZ + (entity.angler.posZ - entity.angler.prevPosZ) * (double)partialTicks + vec3.zCoord;
             double d3 = (double)entity.angler.getEyeHeight();
 
-            if (this.renderManager.options != null && this.renderManager.options.showDebugInfo > 0 || entity.angler != Minecraft.getMinecraft().thePlayer)
+            if (this.renderManager.options != null && this.renderManager.options.thirdPersonView > 0 || entity.angler != Minecraft.getMinecraft().thePlayer)
             {
                 float f9 = (entity.angler.prevRenderYawOffset + (entity.angler.renderYawOffset - entity.angler.prevRenderYawOffset) * partialTicks) * (float)Math.PI / 180.0F;
                 double d4 = (double)MathHelper.sin(f9);

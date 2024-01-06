@@ -116,19 +116,19 @@ public class ItemEditableBook extends Item
                     for (int i = 0; i < nbttaglist.tagCount(); ++i)
                     {
                         String s = nbttaglist.getStringTagAt(i);
-                        IChatComponent ichatcomponent;
+                        IChatComponent lvt_7_1_;
 
                         try
                         {
-                            ichatcomponent = IChatComponent.Serializer.jsonToComponent(s);
-                            ichatcomponent = ChatComponentProcessor.processComponent(player, ichatcomponent, player);
+                            lvt_7_1_ = IChatComponent.Serializer.jsonToComponent(s);
+                            lvt_7_1_ = ChatComponentProcessor.processComponent(player, lvt_7_1_, player);
                         }
                         catch (Exception var9)
                         {
-                            ichatcomponent = new ChatComponentText(s);
+                            lvt_7_1_ = new ChatComponentText(s);
                         }
 
-                        nbttaglist.set(i, new NBTTagString(IChatComponent.Serializer.componentToJson(ichatcomponent)));
+                        nbttaglist.set(i, new NBTTagString(IChatComponent.Serializer.componentToJson(lvt_7_1_)));
                     }
 
                     nbttagcompound.setTag("pages", nbttaglist);

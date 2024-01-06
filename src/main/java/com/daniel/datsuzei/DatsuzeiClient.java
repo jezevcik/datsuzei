@@ -21,6 +21,7 @@ import java.util.concurrent.Future;
 public final class DatsuzeiClient implements MinecraftClient {
 
     public static final String NAME = "Datsuzei";
+    public static final String JP_NAME = "脱税";
     public static final String VERSION = "1.0.0";
 
     private static volatile DatsuzeiClient datsuzeiClient;
@@ -113,6 +114,10 @@ public final class DatsuzeiClient implements MinecraftClient {
             datsuzeiClient = new DatsuzeiClient();
 
         return datsuzeiClient;
+    }
+
+    public boolean isDeveloper() {
+        return System.getProperty("java.class.path").contains("idea_rt.jar");
     }
 
 }

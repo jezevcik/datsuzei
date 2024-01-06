@@ -35,8 +35,17 @@ public class Manager<T extends Feature> implements MinecraftClient {
 
     public void postMinecraftLaunch() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         for(Class<T> clazz : classes) {
-            T feature = clazz.getDeclaredConstructor().newInstance();
-            map.put(feature.getName(), feature);
+            try {
+                T feature = clazz.getDeclaredConstructor().newInstance();
+                map.put(feature.getName(), feature);
+            } catch (IllegalAccessException illegalAccessException) {
+                DatsuzeiClient.getSingleton().getLogger().error(STR."Couldn't access class \{clazz.getName()}", illegalAccessException);
+                if(DatsuzeiClient.getSingleton().isDeveloper()) {
+                    DatsuzeiClient.getSingleton().getLogger().error("You forgot to make something public again, you buffoon.");
+                    System.exit(0);
+                }
+            }
+
         }
     }
 
