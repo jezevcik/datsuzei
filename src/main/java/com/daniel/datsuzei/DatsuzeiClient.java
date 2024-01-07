@@ -3,6 +3,7 @@ package com.daniel.datsuzei;
 import com.daniel.datsuzei.event.Event;
 import com.daniel.datsuzei.font.FontManager;
 import com.daniel.datsuzei.module.ModuleManager;
+import com.daniel.datsuzei.settings.SettingManager;
 import com.daniel.datsuzei.util.interfaces.MinecraftClient;
 import com.daniel.datsuzei.util.logger.NamedLogger;
 import com.github.jezevcik.eventbus.bus.Bus;
@@ -38,6 +39,7 @@ public final class DatsuzeiClient implements MinecraftClient {
     // Specialized managers
     private final FontManager fontManager = new FontManager();
     private final ModuleManager moduleManager = new ModuleManager();
+    private final SettingManager settingManager = new SettingManager();
 
     // Generic managers
     // None atm.
@@ -58,6 +60,7 @@ public final class DatsuzeiClient implements MinecraftClient {
             try {
                 fontManager.preMinecraftLaunch();
                 moduleManager.preMinecraftLaunch();
+                settingManager.preMinecraftLaunch();
             } catch (Exception e) {
                 // Report error and return if the initialization has failed
                 logger.error("Failed to initialize managers in the async launch:", e);
@@ -96,6 +99,7 @@ public final class DatsuzeiClient implements MinecraftClient {
             try {
                 fontManager.postMinecraftLaunch();
                 moduleManager.postMinecraftLaunch();
+                settingManager.postMinecraftLaunch();
             } catch (NoSuchMethodException | InstantiationException | InvocationTargetException |
                      IllegalAccessException e) {
                 logger.error("Failed to initialize managers on post Minecraft launch", e);

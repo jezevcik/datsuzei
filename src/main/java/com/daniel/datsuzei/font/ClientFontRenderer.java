@@ -33,16 +33,15 @@ public class ClientFontRenderer extends FontRenderer implements MinecraftClient,
     private static final int[] COLOR_CODES = new int[32];
     private static final int LATIN_START = 0, LATIN_END = 255,
             CJK_START = 11904, CJK_END = 40959;
-
-    private static final int INT_MAX_AMOUNT = 65535; /*MathUtil.max(LATIN_START, LATIN_END, KATAKANA_START, KATAKANA_END, HIRAGANA_START, HIRAGANA_END);*/
+    private static final int INT_MAX_AMOUNT = 65535;
     private static final int MARGIN_WIDTH = 4;
     private static final int MASK = 0xFF;
 
     private final Font font;
     private final boolean fractionalMetrics;
     private final float fontHeight;
-    private final FontCharacter[] defaultCharacters = new FontCharacter[40959];
-    private final FontCharacter[] boldCharacters = new FontCharacter[40959];
+    private final FontCharacter[] defaultCharacters = new FontCharacter[INT_MAX_AMOUNT];
+    private final FontCharacter[] boldCharacters = new FontCharacter[INT_MAX_AMOUNT];
     private boolean antialiasing = true;
 
     private final boolean allowCJK;
@@ -195,7 +194,7 @@ public class ClientFontRenderer extends FontRenderer implements MinecraftClient,
     }
 
     public int drawStringWithShadow(String text, float x, float y, int color) {
-        this.drawString(text, x + 0.5F, y + 0.5F, -16777216);
+        this.drawString(text, x + fontHeight / 15f, y + fontHeight / 15f, -16777216);
         return this.drawString(text, x, y, color);
     }
     public int drawCenteredStringWithShadow(String text, float x, float y, int color) {

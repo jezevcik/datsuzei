@@ -1,6 +1,8 @@
 package com.daniel.datsuzei.util.math;
 
-public class MathUtil {
+import de.florianmichael.rclasses.math.Arithmetics;
+
+public class MathUtil extends Arithmetics {
 
     public static int max(int... numbers) {
         if (numbers.length == 0) {
