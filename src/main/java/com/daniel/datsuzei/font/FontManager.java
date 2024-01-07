@@ -2,6 +2,7 @@ package com.daniel.datsuzei.font;
 
 import com.daniel.datsuzei.DatsuzeiClient;
 import com.daniel.datsuzei.feature.Manager;
+import com.daniel.datsuzei.settings.SettingManager;
 import com.daniel.datsuzei.util.system.FileUtil;
 import org.apache.ant.compress.taskdefs.Unzip;
 
@@ -11,6 +12,15 @@ import java.util.Map;
 import java.util.Objects;
 
 public class FontManager extends Manager<ClientFontRenderer> {
+
+    private static volatile FontManager fontManager;
+
+    public static FontManager getSingleton() {
+        if(fontManager == null)
+            fontManager = new FontManager();
+
+        return fontManager;
+    }
 
     private File fontDirectory;
 

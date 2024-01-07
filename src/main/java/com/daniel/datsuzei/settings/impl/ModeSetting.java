@@ -6,9 +6,9 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.List;
 
+@Getter
 public class ModeSetting extends SettingFeature<String> {
 
-    @Getter
     private String value;
     private final List<String> modes;
 

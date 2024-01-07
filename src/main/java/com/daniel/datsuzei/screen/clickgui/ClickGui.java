@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ClickGui extends GuiScreen {
 
-    private final ModuleScreenModule moduleScreenModule;
+    public final ModuleScreenModule moduleScreenModule;
     private final List<Frame> frames = new ArrayList<>();
 
     @Override
@@ -28,7 +28,7 @@ public class ClickGui extends GuiScreen {
             float frameX = 20, frameY = 20;
 
             for(ModuleCategory category : ModuleCategory.values()) {
-                frames.add(new Frame(category, frameX, frameY, frameWidth, frameHeight));
+                frames.add(new Frame(this, category, frameX, frameY, frameWidth, frameHeight));
                 frameY += frameHeight + frameMargin;
             }
         }

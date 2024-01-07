@@ -36,11 +36,6 @@ public final class DatsuzeiClient implements MinecraftClient {
     private Future<Integer> clientLaunchTask;
     private long lastPrintOut;
 
-    // Specialized managers
-    private final FontManager fontManager = new FontManager();
-    private final ModuleManager moduleManager = new ModuleManager();
-    private final SettingManager settingManager = new SettingManager();
-
     // Generic managers
     // None atm.
 
@@ -58,9 +53,9 @@ public final class DatsuzeiClient implements MinecraftClient {
 
             // Initialize managers
             try {
-                fontManager.preMinecraftLaunch();
-                moduleManager.preMinecraftLaunch();
-                settingManager.preMinecraftLaunch();
+                FontManager.getSingleton().preMinecraftLaunch();
+                ModuleManager.getSingleton().preMinecraftLaunch();
+                SettingManager.getSingleton().preMinecraftLaunch();
             } catch (Exception e) {
                 // Report error and return if the initialization has failed
                 logger.error("Failed to initialize managers in the async launch:", e);
@@ -97,9 +92,9 @@ public final class DatsuzeiClient implements MinecraftClient {
 
             // Initialize managers
             try {
-                fontManager.postMinecraftLaunch();
-                moduleManager.postMinecraftLaunch();
-                settingManager.postMinecraftLaunch();
+                FontManager.getSingleton().postMinecraftLaunch();
+                ModuleManager.getSingleton().postMinecraftLaunch();
+                SettingManager.getSingleton().postMinecraftLaunch();
             } catch (NoSuchMethodException | InstantiationException | InvocationTargetException |
                      IllegalAccessException e) {
                 logger.error("Failed to initialize managers on post Minecraft launch", e);

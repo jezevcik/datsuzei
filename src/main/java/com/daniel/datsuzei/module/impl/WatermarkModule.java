@@ -1,7 +1,7 @@
 package com.daniel.datsuzei.module.impl;
 
-import com.daniel.datsuzei.DatsuzeiClient;
 import com.daniel.datsuzei.event.impl.Render2DEvent;
+import com.daniel.datsuzei.font.FontManager;
 import com.daniel.datsuzei.module.ModuleCategory;
 import com.daniel.datsuzei.module.ModuleFeature;
 import com.daniel.datsuzei.settings.impl.BooleanSetting;
@@ -12,7 +12,7 @@ import org.lwjglx.input.Keyboard;
 
 public class WatermarkModule extends ModuleFeature {
 
-    private final BooleanSetting dropShadow = new BooleanSetting("DropShadow", true);
+    public final BooleanSetting dropShadow = new BooleanSetting("DropShadow", true);
 
     public WatermarkModule() {
         super(new ModuleData("Watermark", "Displays a watermark", ModuleCategory.RENDER),
@@ -20,12 +20,12 @@ public class WatermarkModule extends ModuleFeature {
     }
 
     @Listen
-    public final Listener<Render2DEvent> render2DEventListener = render2DEvent -> {
-        final FontRenderer fontRenderer = DatsuzeiClient.getSingleton().getFontManager().get("Arial", "Regular", 50);
+    public final Listener<Render2DEvent> render2DEventListener = _ -> {
+        final FontRenderer fontRenderer = FontManager.getSingleton().get("Arial", "Regular", 50);
         if(dropShadow.getValue())
-            fontRenderer.drawStringWithShadow("Datsuzei", 3, 5, -1);
+            fontRenderer.drawStringWithShadow("Datsuzei", 3, 2, -1);
         else
-            fontRenderer.drawString("Datsuzei", 3, 5, -1);
+            fontRenderer.drawString("Datsuzei", 3, 2, -1);
     };
 
     @Override
