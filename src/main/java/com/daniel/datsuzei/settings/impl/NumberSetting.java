@@ -4,9 +4,9 @@ import com.daniel.datsuzei.settings.SettingFeature;
 import com.daniel.datsuzei.util.math.MathUtil;
 import lombok.Getter;
 
+@Getter
 public class NumberSetting<T extends Number> extends SettingFeature<T> {
 
-    @Getter
     private T value;
     private final T minimum, maximum;
 

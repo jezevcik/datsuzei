@@ -64,7 +64,7 @@ public class ClientFontRenderer extends FontRenderer implements MinecraftClient,
         this.size = size;
         this.antialiasing = antialiasing;
         this.font = font;
-        this.allowCJK = font.canDisplay(DatsuzeiClient.JP_NAME.charAt(0));
+        this.allowCJK = font.canDisplay(DatsuzeiClient.CJ_NAME.charAt(0));
         this.fractionalMetrics = fractionalMetrics;
         this.fontHeight = (float) (font.getStringBounds(ALPHABET, new FontRenderContext(new AffineTransform(), antialiasing, fractionalMetrics)).getHeight() / 2);
         this.fillCharacters(this.defaultCharacters, Font.PLAIN);
@@ -78,7 +78,7 @@ public class ClientFontRenderer extends FontRenderer implements MinecraftClient,
         this.type = type;
         this.size = size;
         this.font = font;
-        this.allowCJK = font.canDisplay(DatsuzeiClient.JP_NAME.charAt(0));
+        this.allowCJK = font.canDisplay(DatsuzeiClient.CJ_NAME.charAt(0));
         this.fractionalMetrics = fractionalMetrics;
         this.fontHeight = (float) (font.getStringBounds(ALPHABET, new FontRenderContext(new AffineTransform(), true, fractionalMetrics)).getHeight() / 2);
         this.fillCharacters(this.defaultCharacters, Font.PLAIN);
@@ -194,12 +194,11 @@ public class ClientFontRenderer extends FontRenderer implements MinecraftClient,
     }
 
     public int drawStringWithShadow(String text, float x, float y, int color) {
-        this.drawString(text, x + fontHeight / 15f, y + fontHeight / 15f, -16777216);
+        this.drawString(text, x + fontHeight / 15f, y + fontHeight / 15f, color, true);
         return this.drawString(text, x, y, color);
     }
     public int drawCenteredStringWithShadow(String text, float x, float y, int color) {
-        this.drawString(text, x - (float)(this.getStringWidth(text) / 2) + 0.5F, y + 0.5F, -16777216);
-        return this.drawString(text, x - (float)(this.getStringWidth(text) / 2), y, color);
+        return this.drawStringWithShadow(text, x - (float)(this.getStringWidth(text) / 2), y, color);
     }
 
     public int drawTotalCenteredString(String string, float x, float y, int color) {
@@ -239,7 +238,7 @@ public class ClientFontRenderer extends FontRenderer implements MinecraftClient,
         y *= SCALE_INVERSE;
         y -= fontHeight / 5;
 
-        final int shadowColor = Color.BLACK.getRGB(); //(color & 0xFCFCFC) >> 2 | color & 0xFF000000
+        final int shadowColor = -16777216; //(color & 0xFCFCFC) >> 2 | color & 0xFF000000
 
         final float startX = x;
 
