@@ -1,5 +1,6 @@
 package net.minecraft.client.entity;
 
+import com.daniel.datsuzei.util.player.PlayerUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSoundMinecartRiding;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -42,13 +43,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatFileWriter;
 import net.minecraft.tileentity.TileEntitySign;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.MovementInput;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.world.IInteractionObject;
 import net.minecraft.world.World;
 
@@ -161,7 +156,20 @@ public class EntityPlayerSP extends AbstractClientPlayer
             this.mc.getSoundHandler().playSound(new MovingSoundMinecartRiding(this, (EntityMinecart)entityIn));
         }
     }
+    
+    @Override
+    public Vec3 getLookVec() {
+        return this.getLook(1.0F);
+    }
 
+    /**
+     * interpolated look vector
+     */
+    @Override
+    public Vec3 getLook(float partialTicks) {
+        return getVectorForRotation(PlayerUtil.rotationPitch, PlayerUtil.rotationYaw);
+    }
+    
     /**
      * Called to update the entity's position/logic.
      */
@@ -173,7 +181,7 @@ public class EntityPlayerSP extends AbstractClientPlayer
 
             if (this.isRiding())
             {
-                this.sendQueue.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(this.rotationYaw, this.rotationPitch, this.onGround));
+                this.sendQueue.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(PlayerUtil.rotationYaw, PlayerUtil.rotationPitch, this.onGround));
                 this.sendQueue.addToSendQueue(new C0CPacketInput(this.moveStrafing, this.moveForward, this.movementInput.jump, this.movementInput.sneak));
             }
             else
@@ -225,8 +233,8 @@ public class EntityPlayerSP extends AbstractClientPlayer
             double d0 = this.posX - this.lastReportedPosX;
             double d1 = this.getEntityBoundingBox().minY - this.lastReportedPosY;
             double d2 = this.posZ - this.lastReportedPosZ;
-            double d3 = (double)(this.rotationYaw - this.lastReportedYaw);
-            double d4 = (double)(this.rotationPitch - this.lastReportedPitch);
+            double d3 = (double)(PlayerUtil.rotationYaw - this.lastReportedYaw);
+            double d4 = (double)(PlayerUtil.rotationPitch - this.lastReportedPitch);
             boolean flag2 = d0 * d0 + d1 * d1 + d2 * d2 > 9.0E-4D || this.positionUpdateTicks >= 20;
             boolean flag3 = d3 != 0.0D || d4 != 0.0D;
 
@@ -234,7 +242,7 @@ public class EntityPlayerSP extends AbstractClientPlayer
             {
                 if (flag2 && flag3)
                 {
-                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.posX, this.getEntityBoundingBox().minY, this.posZ, this.rotationYaw, this.rotationPitch, this.onGround));
+                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.posX, this.getEntityBoundingBox().minY, this.posZ, PlayerUtil.rotationYaw, PlayerUtil.rotationPitch, this.onGround));
                 }
                 else if (flag2)
                 {
@@ -242,7 +250,7 @@ public class EntityPlayerSP extends AbstractClientPlayer
                 }
                 else if (flag3)
                 {
-                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(this.rotationYaw, this.rotationPitch, this.onGround));
+                    this.sendQueue.addToSendQueue(new C03PacketPlayer.C05PacketPlayerLook(PlayerUtil.rotationYaw, PlayerUtil.rotationPitch, this.onGround));
                 }
                 else
                 {
@@ -251,7 +259,7 @@ public class EntityPlayerSP extends AbstractClientPlayer
             }
             else
             {
-                this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.motionX, -999.0D, this.motionZ, this.rotationYaw, this.rotationPitch, this.onGround));
+                this.sendQueue.addToSendQueue(new C03PacketPlayer.C06PacketPlayerPosLook(this.motionX, -999.0D, this.motionZ, PlayerUtil.rotationYaw, PlayerUtil.rotationPitch, this.onGround));
                 flag2 = false;
             }
 
@@ -267,8 +275,8 @@ public class EntityPlayerSP extends AbstractClientPlayer
 
             if (flag3)
             {
-                this.lastReportedYaw = this.rotationYaw;
-                this.lastReportedPitch = this.rotationPitch;
+                this.lastReportedYaw = PlayerUtil.rotationYaw;
+                this.lastReportedPitch = PlayerUtil.rotationPitch;
             }
         }
     }

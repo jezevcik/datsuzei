@@ -1,5 +1,6 @@
 package net.minecraft.entity.player;
 
+import com.daniel.datsuzei.util.player.PlayerUtil;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
@@ -11,6 +12,7 @@ import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.server.CommandBlockLogic;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -543,30 +545,35 @@ public abstract class EntityPlayer extends EntityLivingBase
     /**
      * Handles updating while being ridden by an entity
      */
-    public void updateRidden()
-    {
-        if (!this.worldObj.isRemote && this.isSneaking())
-        {
-            this.mountEntity((Entity)null);
+    public void updateRidden() {
+        if (!this.worldObj.isRemote && this.isSneaking()) {
+            this.mountEntity((Entity) null);
             this.setSneaking(false);
-        }
-        else
-        {
+        } else {
             double d0 = this.posX;
             double d1 = this.posY;
             double d2 = this.posZ;
-            float f = this.rotationYaw;
-            float f1 = this.rotationPitch;
+            float yaw = this.rotationYaw;
+            float pitch = this.rotationPitch;
+            if(this == Minecraft.getMinecraft().thePlayer) {
+                yaw = PlayerUtil.rotationYaw;
+                pitch = PlayerUtil.rotationPitch;
+            }
+            float f = yaw;
+            float f1 = pitch;
             super.updateRidden();
             this.prevCameraYaw = this.cameraYaw;
             this.cameraYaw = 0.0F;
             this.addMountedMovementStat(this.posX - d0, this.posY - d1, this.posZ - d2);
 
-            if (this.ridingEntity instanceof EntityPig)
-            {
+            if (this.ridingEntity instanceof EntityPig) {
                 this.rotationPitch = f1;
                 this.rotationYaw = f;
-                this.renderYawOffset = ((EntityPig)this.ridingEntity).renderYawOffset;
+                if(this == Minecraft.getMinecraft().thePlayer) {
+                    PlayerUtil.rotationYaw = f;
+                    PlayerUtil.rotationPitch = f1;
+                }
+                this.renderYawOffset = ((EntityPig) this.ridingEntity).renderYawOffset;
             }
         }
     }
@@ -729,8 +736,11 @@ public abstract class EntityPlayer extends EntityLivingBase
 
         if (cause != null)
         {
-            this.motionX = (double)(-MathHelper.cos((this.attackedAtYaw + this.rotationYaw) * (float)Math.PI / 180.0F) * 0.1F);
-            this.motionZ = (double)(-MathHelper.sin((this.attackedAtYaw + this.rotationYaw) * (float)Math.PI / 180.0F) * 0.1F);
+            float yaw = this.rotationYaw;
+            if(this == Minecraft.getMinecraft().thePlayer)
+                yaw = PlayerUtil.rotationYaw;
+            this.motionX = (double) (-MathHelper.cos((this.attackedAtYaw + yaw) * (float) Math.PI / 180.0F) * 0.1F);
+            this.motionZ = (double) (-MathHelper.sin((this.attackedAtYaw + yaw) * (float) Math.PI / 180.0F) * 0.1F);
         }
         else
         {
@@ -865,14 +875,20 @@ public abstract class EntityPlayer extends EntityLivingBase
             else
             {
                 float f2 = 0.3F;
-                entityitem.motionX = (double)(-MathHelper.sin(this.rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(this.rotationPitch / 180.0F * (float)Math.PI) * f2);
-                entityitem.motionZ = (double)(MathHelper.cos(this.rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(this.rotationPitch / 180.0F * (float)Math.PI) * f2);
-                entityitem.motionY = (double)(-MathHelper.sin(this.rotationPitch / 180.0F * (float)Math.PI) * f2 + 0.1F);
-                float f3 = this.rand.nextFloat() * (float)Math.PI * 2.0F;
+                float yaw = this.rotationYaw;
+                float pitch = this.rotationYaw;
+                if(this == Minecraft.getMinecraft().thePlayer) {
+                    yaw = PlayerUtil.rotationYaw;
+                    pitch = PlayerUtil.rotationPitch;
+                }
+                entityitem.motionX = (double) (-MathHelper.sin(yaw / 180.0F * (float) Math.PI) * MathHelper.cos(pitch / 180.0F * (float) Math.PI) * f2);
+                entityitem.motionZ = (double) (MathHelper.cos(yaw / 180.0F * (float) Math.PI) * MathHelper.cos(pitch / 180.0F * (float) Math.PI) * f2);
+                entityitem.motionY = (double) (-MathHelper.sin(pitch / 180.0F * (float) Math.PI) * f2 + 0.1F);
+                float f3 = this.rand.nextFloat() * (float) Math.PI * 2.0F;
                 f2 = 0.02F * this.rand.nextFloat();
-                entityitem.motionX += Math.cos((double)f3) * (double)f2;
-                entityitem.motionY += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
-                entityitem.motionZ += Math.sin((double)f3) * (double)f2;
+                entityitem.motionX += Math.cos((double) f3) * (double) f2;
+                entityitem.motionY += (double) ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
+                entityitem.motionZ += Math.sin((double) f3) * (double) f2;
             }
 
             this.joinEntityItemWithWorld(entityitem);
@@ -1356,7 +1372,8 @@ public abstract class EntityPlayer extends EntityLivingBase
                     {
                         if (i > 0)
                         {
-                            targetEntity.addVelocity((double)(-MathHelper.sin(this.rotationYaw * (float)Math.PI / 180.0F) * (float)i * 0.5F), 0.1D, (double)(MathHelper.cos(this.rotationYaw * (float)Math.PI / 180.0F) * (float)i * 0.5F));
+                            float yaw = this == Minecraft.getMinecraft().thePlayer ? PlayerUtil.rotationYaw : this.rotationYaw;
+                            targetEntity.addVelocity((double)(-MathHelper.sin(yaw * (float)Math.PI / 180.0F) * (float)i * 0.5F), 0.1D, (double)(MathHelper.cos(yaw * (float)Math.PI / 180.0F) * (float)i * 0.5F));
                             this.motionX *= 0.6D;
                             this.motionZ *= 0.6D;
                             this.setSprinting(false);

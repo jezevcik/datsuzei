@@ -1,5 +1,6 @@
 package net.minecraft.client.renderer.entity;
 
+import com.daniel.datsuzei.util.player.PlayerUtil;
 import com.google.common.collect.Lists;
 import java.nio.FloatBuffer;
 import java.util.List;
@@ -15,7 +16,6 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EnumPlayerModelParts;
@@ -115,8 +115,9 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 
             try
             {
+                float yaw = entity == Minecraft.getMinecraft().thePlayer ? PlayerUtil.rotationYaw : entity.rotationYawHead;
                 float f = this.interpolateRotation(entity.prevRenderYawOffset, entity.renderYawOffset, partialTicks);
-                float f1 = this.interpolateRotation(entity.prevRotationYawHead, entity.rotationYawHead, partialTicks);
+                float f1 = this.interpolateRotation(entity.prevRotationYawHead, yaw, partialTicks);
                 float f2 = f1 - f;
 
                 if (this.mainModel.isRiding && entity.ridingEntity instanceof EntityLivingBase)
@@ -145,6 +146,8 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
                 }
 
                 float f8 = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
+                if(entity == Minecraft.getMinecraft().thePlayer)
+                    f8 = PlayerUtil.lastRotationPitch + (PlayerUtil.rotationPitch - PlayerUtil.lastRotationPitch) * partialTicks;
                 this.renderLivingAt(entity, x, y, z);
                 float f7 = this.handleRotationFloat(entity, partialTicks);
                 this.rotateCorpse(entity, f7, f, partialTicks);

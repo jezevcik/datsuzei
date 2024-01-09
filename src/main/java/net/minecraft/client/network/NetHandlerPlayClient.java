@@ -1,5 +1,6 @@
 package net.minecraft.client.network;
 
+import com.daniel.datsuzei.util.player.PlayerUtil;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -588,6 +589,12 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient
                 entity.setPositionAndRotation2(d0, d1, d2, f, f1, 3, true);
             }
 
+
+            if(entity == Minecraft.getMinecraft().thePlayer) {
+                PlayerUtil.rotationYaw = f;
+                PlayerUtil.rotationPitch = f1;
+            }
+
             entity.onGround = packetIn.getOnGround();
         }
     }
@@ -705,15 +712,19 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient
 
         if (packetIn.func_179834_f().contains(S08PacketPlayerPosLook.EnumFlags.X_ROT))
         {
-            f1 += entityplayer.rotationPitch;
+            f1 += PlayerUtil.rotationPitch;
         }
 
         if (packetIn.func_179834_f().contains(S08PacketPlayerPosLook.EnumFlags.Y_ROT))
         {
-            f += entityplayer.rotationYaw;
+            f += PlayerUtil.rotationYaw;
         }
 
         entityplayer.setPositionAndRotation(d0, d1, d2, f, f1);
+
+        PlayerUtil.rotationYaw = f;
+        PlayerUtil.rotationPitch = f1;
+
         this.netManager.sendPacket(new C03PacketPlayer.C06PacketPlayerPosLook(entityplayer.posX, entityplayer.getEntityBoundingBox().minY, entityplayer.posZ, entityplayer.rotationYaw, entityplayer.rotationPitch, false));
 
         if (!this.doneLoadingTerrain)
@@ -725,6 +736,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient
             this.gameController.displayGuiScreen((GuiScreen)null);
         }
     }
+
 
     /**
      * Received from the servers PlayerManager if between 1 and 64 blocks in a chunk are changed. If only one block

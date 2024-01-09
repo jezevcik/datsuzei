@@ -1,5 +1,6 @@
 package net.minecraft.item;
 
+import com.daniel.datsuzei.util.player.PlayerUtil;
 import com.google.common.base.Function;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
@@ -21,6 +22,7 @@ import net.minecraft.block.BlockSilverfish;
 import net.minecraft.block.BlockStone;
 import net.minecraft.block.BlockStoneBrick;
 import net.minecraft.block.BlockWall;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -434,10 +436,17 @@ public class Item
         return this.getItemStackLimit() == 1 && this.isDamageable();
     }
 
+
     protected MovingObjectPosition getMovingObjectPositionFromPlayer(World worldIn, EntityPlayer playerIn, boolean useLiquids)
     {
-        float f = playerIn.rotationPitch;
-        float f1 = playerIn.rotationYaw;
+        float yaw = playerIn.rotationYaw;
+        float pitch = playerIn.rotationPitch;
+        if(playerIn == Minecraft.getMinecraft().thePlayer) {
+            yaw = PlayerUtil.rotationYaw;
+            pitch = PlayerUtil.rotationPitch;
+        }
+        float f = pitch;
+        float f1 = yaw;
         double d0 = playerIn.posX;
         double d1 = playerIn.posY + (double)playerIn.getEyeHeight();
         double d2 = playerIn.posZ;

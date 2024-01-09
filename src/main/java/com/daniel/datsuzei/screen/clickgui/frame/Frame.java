@@ -81,7 +81,7 @@ public class Frame {
                 float predictedY = 0;
 
                 if(selectedModule == null) {
-                    predictedY = modules.size() * height - 2;
+                    predictedY = modules.size() * (height - 2) + 2;
                 } else {
                     final Collection<SettingFeature<?>> settings = SettingManager.getSingleton().getByOwner(selectedModule);
 

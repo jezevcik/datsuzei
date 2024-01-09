@@ -1,5 +1,6 @@
 package net.minecraft.entity;
 
+import com.daniel.datsuzei.util.player.PlayerUtil;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Maps;
@@ -12,6 +13,7 @@ import java.util.UUID;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.BaseAttributeMap;
@@ -381,6 +383,10 @@ public abstract class EntityLivingBase extends Entity
         this.prevRotationYawHead = this.rotationYawHead;
         this.prevRotationYaw = this.rotationYaw;
         this.prevRotationPitch = this.rotationPitch;
+        if(this == Minecraft.getMinecraft().thePlayer) {
+            this.prevRotationYawHead = PlayerUtil.rotationYaw;
+            PlayerUtil.lastRotationPitch = PlayerUtil.rotationPitch;
+        }
         this.worldObj.theProfiler.endSection();
     }
 
@@ -958,7 +964,10 @@ public abstract class EntityLivingBase extends Entity
                             d1 = (Math.random() - Math.random()) * 0.01D;
                         }
 
-                        this.attackedAtYaw = (float)(MathHelper.func_181159_b(d0, d1) * 180.0D / Math.PI - (double)this.rotationYaw);
+                        float yaw = this.rotationYaw;
+                        if(this == Minecraft.getMinecraft().thePlayer)
+                            yaw = PlayerUtil.rotationYaw;
+                        this.attackedAtYaw = (float)(MathHelper.func_181159_b(d0, d1) * 180.0D / Math.PI - (double)yaw);
                         this.knockBack(entity, amount, d1, d0);
                     }
                     else
@@ -1564,7 +1573,7 @@ public abstract class EntityLivingBase extends Entity
 
         if (this.isSprinting())
         {
-            float f = this.rotationYaw * 0.017453292F;
+            float f = (this == Minecraft.getMinecraft().thePlayer && PlayerUtil.movementAngleCorrection ? PlayerUtil.rotationYaw : this.rotationYaw) * 0.017453292F;
             this.motionX -= (double)(MathHelper.sin(f) * 0.2F);
             this.motionZ += (double)(MathHelper.cos(f) * 0.2F);
         }
@@ -1840,7 +1849,7 @@ public abstract class EntityLivingBase extends Entity
 
         if (this.swingProgress > 0.0F)
         {
-            f1 = this.rotationYaw;
+            f1 = (this == Minecraft.getMinecraft().thePlayer ? PlayerUtil.rotationYaw : this.rotationYaw);
         }
 
         if (!this.onGround)
@@ -1900,9 +1909,10 @@ public abstract class EntityLivingBase extends Entity
 
     protected float func_110146_f(float p_110146_1_, float p_110146_2_)
     {
+        float yaw = this == Minecraft.getMinecraft().thePlayer ? PlayerUtil.rotationYaw : rotationYaw;
         float f = MathHelper.wrapAngleTo180_float(p_110146_1_ - this.renderYawOffset);
         this.renderYawOffset += f * 0.3F;
-        float f1 = MathHelper.wrapAngleTo180_float(this.rotationYaw - this.renderYawOffset);
+        float f1 = MathHelper.wrapAngleTo180_float(yaw - this.renderYawOffset);
         boolean flag = f1 < -90.0F || f1 >= 90.0F;
 
         if (f1 < -75.0F)
@@ -1915,7 +1925,7 @@ public abstract class EntityLivingBase extends Entity
             f1 = 75.0F;
         }
 
-        this.renderYawOffset = this.rotationYaw - f1;
+        this.renderYawOffset = yaw - f1;
 
         if (f1 * f1 > 2500.0F)
         {

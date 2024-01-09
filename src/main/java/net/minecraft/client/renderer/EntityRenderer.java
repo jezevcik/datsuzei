@@ -1,5 +1,8 @@
 package net.minecraft.client.renderer;
 
+import com.daniel.datsuzei.DatsuzeiClient;
+import com.daniel.datsuzei.event.impl.RotationEvent;
+import com.daniel.datsuzei.util.player.PlayerUtil;
 import com.google.common.base.Predicates;
 import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
@@ -1300,6 +1303,12 @@ public class EntityRenderer implements IResourceManagerReloadListener
                 this.smoothCamPitch = 0.0F;
                 this.mc.thePlayer.setAngles(f2, f3 * (float)b0);
             }
+            final RotationEvent rotationEvent = new RotationEvent(mc.thePlayer.rotationYaw, mc.thePlayer.rotationPitch);
+            DatsuzeiClient.getSingleton().getEventBus().post(rotationEvent);
+            PlayerUtil.lastRotationYaw = PlayerUtil.rotationYaw;
+            PlayerUtil.lastRotationPitch = PlayerUtil.rotationPitch;
+            PlayerUtil.rotationYaw = rotationEvent.yaw;
+            PlayerUtil.rotationPitch = rotationEvent.pitch;
         }
 
         this.mc.mcProfiler.endSection();
