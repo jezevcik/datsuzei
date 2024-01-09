@@ -40,12 +40,18 @@ public class WatermarkModule extends ModuleFeature {
             case "Classic" -> {
                 final String text = STR."\{DatsuzeiClient.CJ_NAME } \{DatsuzeiClient.VERSION} - \{Minecraft.getDebugFPS()} fps";
                 DrawUtil.drawRectRelative(0, 0, mc.fontRendererObj.getStringWidth(text) + 2, mc.fontRendererObj.FONT_HEIGHT + 1, new Color(30, 30, 30, 80).getRGB());
-                mc.fontRendererObj.drawStringWithShadow(text, 1, 1, -1);
+                if(dropShadow.getValue())
+                    mc.fontRendererObj.drawStringWithShadow(text, 1, 1, -1);
+                else
+                    mc.fontRendererObj.drawString(text, 1, 1, -1);
             }
             case "Simple" -> {
                 GlStateManager.pushMatrix();
                 GlStateManager.scale(3f, 3f, 3f);
-                mc.fontRendererObj.drawStringWithShadow("Datsuzei", 1, 1, -1);
+                if(dropShadow.getValue())
+                    mc.fontRendererObj.drawStringWithShadow("Datsuzei", 1, 1, -1);
+                else
+                    mc.fontRendererObj.drawString("Datsuzei", 1, 1, -1);
                 GlStateManager.popMatrix();
             }
         }

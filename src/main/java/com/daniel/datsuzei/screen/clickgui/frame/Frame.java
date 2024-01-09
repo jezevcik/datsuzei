@@ -12,7 +12,6 @@ import com.daniel.datsuzei.settings.SettingManager;
 import com.daniel.datsuzei.settings.impl.BooleanSetting;
 import com.daniel.datsuzei.settings.impl.ModeSetting;
 import com.daniel.datsuzei.settings.impl.NumberSetting;
-import com.daniel.datsuzei.util.math.MathUtil;
 import com.daniel.datsuzei.util.render.DrawUtil;
 import de.florianmichael.rclasses.math.integration.Boundings;
 import net.minecraft.util.MathHelper;

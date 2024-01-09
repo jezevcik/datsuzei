@@ -2,16 +2,19 @@ package com.daniel.datsuzei.feature;
 
 import com.daniel.datsuzei.DatsuzeiClient;
 import com.daniel.datsuzei.util.interfaces.MinecraftClient;
+import com.daniel.datsuzei.util.reflection.ReflectionUtil;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+@Getter
 @RequiredArgsConstructor
 public class Manager<T extends Feature> implements MinecraftClient {
     protected final Map<String, T> map = new TreeMap<>();
-    private final List<Class<T>> classes = new ArrayList<>();
+    protected final List<Class<T>> classes = new ArrayList<>();
     private final Class<T> mainType;
 
     public Manager() {
@@ -25,8 +28,13 @@ public class Manager<T extends Feature> implements MinecraftClient {
             // Use reflection to discover and instantiate all feature subclasses in the "com.daniel.datsuzei" package
             final Reflections reflections = new Reflections("com.daniel.datsuzei");
             reflections.getSubTypesOf(mainType).forEach(featureClass -> {
-                // Add the class to a list, to be instantiated after Minecraft has launcher
-                classes.add((Class<T>) featureClass);
+                // Cast the class to the manager's type
+                final Class<T> castClass = (Class<T>) featureClass;
+                // Check if the class has an empty usable constructor
+                if(ReflectionUtil.hasParameterlessConstructor(castClass)) {
+                    // Add the class to a list, to be instantiated after Minecraft has launcher
+                    classes.add(castClass);
+                }
             });
             // Log the amount of found classes
             DatsuzeiClient.getSingleton().getLogger().info(STR."Loaded \{classes.size()} subtypes of \{mainType.getSimpleName()}");

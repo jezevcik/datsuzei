@@ -1,6 +1,5 @@
 package com.daniel.datsuzei.settings;
 
-import com.daniel.datsuzei.DatsuzeiClient;
 import com.daniel.datsuzei.feature.Feature;
 import com.daniel.datsuzei.feature.Manager;
 import com.daniel.datsuzei.module.ModuleFeature;

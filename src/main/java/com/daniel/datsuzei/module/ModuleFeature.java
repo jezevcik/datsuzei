@@ -2,6 +2,8 @@ package com.daniel.datsuzei.module;
 
 import com.daniel.datsuzei.DatsuzeiClient;
 import com.daniel.datsuzei.feature.Feature;
+import com.daniel.datsuzei.util.json.DeserializationUtil;
+import com.google.gson.JsonObject;
 import de.florianmichael.rclasses.common.ArrayUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,11 +16,13 @@ public abstract class ModuleFeature implements Feature {
 
     private final String name, description;
     private final ModuleCategory category;
-    private final boolean allowSaveEnable, saveToConfig, loadFromConfig;
+    private final boolean allowSaveEnable;
     private final Function<Integer, Integer> keyCheckerFunction;
 
     @Setter
     private int key;
+    @Setter
+    private boolean saveToConfig, loadFromConfig;
     private boolean enabled;
 
     protected ModuleFeature(ModuleData moduleData, BindableData bindableData, ConfigurableData configurableData) {
@@ -71,18 +75,42 @@ public abstract class ModuleFeature implements Feature {
     // Method to be called when the module is disabled
     protected abstract void onDisable();
 
+    // Serializes the module and returns a json object with the values enabled, key, saveToConfig and loadFromConfig
+    @Override
+    public JsonObject serializeFeature() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("enabled", enabled);
+        jsonObject.addProperty("key", key);
+        jsonObject.addProperty("saveToConfig", saveToConfig);
+        jsonObject.addProperty("loadFromConfig", loadFromConfig);
+        return jsonObject;
+    }
+
+    // Changes variables depending on the information in the json
+    @Override
+    public void deserializeFeature(JsonObject jsonObject) {
+        try {
+            setEnabled(DeserializationUtil.elementExists("enabled", jsonObject).getAsBoolean());
+            setKey(DeserializationUtil.elementExists("key", jsonObject).getAsInt());
+            setSaveToConfig(DeserializationUtil.elementExists("saveToConfig", jsonObject).getAsBoolean());
+            setLoadFromConfig(DeserializationUtil.elementExists("loadFromConfig", jsonObject).getAsBoolean());
+        } catch (DeserializationUtil.ElementNotFoundException e) {
+            DatsuzeiClient.getSingleton().getLogger().error(STR."Failed to deserialize module \{ getName()}:", e);
+        }
+    }
+
     // Calls the logger with the message and module identifier
     protected final void warn(String warning) {
-        DatsuzeiClient.getSingleton().getLogger().warn(STR."\{warning} (\{getName()})");
+        DatsuzeiClient.getSingleton().getLogger().warn(STR."\{warning} (\{ getName()})");
     }
 
     protected final void error(String error) {
-        DatsuzeiClient.getSingleton().getLogger().error(STR."\{error} (\{getName()})");
+        DatsuzeiClient.getSingleton().getLogger().error(STR."\{error} (\{ getName()})");
 
     }
 
     protected final void info(String information) {
-        DatsuzeiClient.getSingleton().getLogger().info(STR."\{information} (\{getName()})");
+        DatsuzeiClient.getSingleton().getLogger().info(STR."\{information} (\{ getName()})");
     }
 
     // Record for holding module-specific data

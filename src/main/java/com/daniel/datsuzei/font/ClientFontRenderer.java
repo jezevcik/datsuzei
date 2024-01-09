@@ -6,6 +6,7 @@ import com.daniel.datsuzei.util.interfaces.MinecraftClient;
 import com.daniel.datsuzei.util.math.MathUtil;
 import com.daniel.datsuzei.util.render.font.FontCharacter;
 import com.daniel.datsuzei.util.render.gl.GLUtil;
+import com.google.gson.JsonObject;
 import lombok.Getter;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -319,5 +320,15 @@ public class ClientFontRenderer extends FontRenderer implements MinecraftClient,
     @Override
     public String getName() {
         return STR."\{family}-\{type}-\{size}";
+    }
+
+    @Override
+    public JsonObject serializeFeature() {
+        throw new IllegalStateException("Cannot serialize a font!");
+    }
+
+    @Override
+    public void deserializeFeature(JsonObject jsonObject) {
+        throw new IllegalStateException("Cannot deserialize a font!");
     }
 }

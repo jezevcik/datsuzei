@@ -2,14 +2,11 @@ package com.daniel.datsuzei.font;
 
 import com.daniel.datsuzei.DatsuzeiClient;
 import com.daniel.datsuzei.feature.Manager;
-import com.daniel.datsuzei.settings.SettingManager;
 import com.daniel.datsuzei.util.system.FileUtil;
 import org.apache.ant.compress.taskdefs.Unzip;
 
 import java.awt.*;
 import java.io.*;
-import java.util.Map;
-import java.util.Objects;
 
 public class FontManager extends Manager<ClientFontRenderer> {
 

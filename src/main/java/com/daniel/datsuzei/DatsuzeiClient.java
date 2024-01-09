@@ -1,6 +1,7 @@
 package com.daniel.datsuzei;
 
 import com.daniel.datsuzei.event.Event;
+import com.daniel.datsuzei.file.FileManager;
 import com.daniel.datsuzei.font.FontManager;
 import com.daniel.datsuzei.module.ModuleManager;
 import com.daniel.datsuzei.settings.SettingManager;
@@ -56,6 +57,7 @@ public final class DatsuzeiClient implements MinecraftClient {
                 FontManager.getSingleton().preMinecraftLaunch();
                 ModuleManager.getSingleton().preMinecraftLaunch();
                 SettingManager.getSingleton().preMinecraftLaunch();
+                FileManager.getSingleton().preMinecraftLaunch();
             } catch (Exception e) {
                 // Report error and return if the initialization has failed
                 logger.error("Failed to initialize managers in the async launch:", e);
@@ -95,6 +97,7 @@ public final class DatsuzeiClient implements MinecraftClient {
                 FontManager.getSingleton().postMinecraftLaunch();
                 ModuleManager.getSingleton().postMinecraftLaunch();
                 SettingManager.getSingleton().postMinecraftLaunch();
+                FileManager.getSingleton().postMinecraftLaunch();
             } catch (NoSuchMethodException | InstantiationException | InvocationTargetException |
                      IllegalAccessException e) {
                 logger.error("Failed to initialize managers on post Minecraft launch", e);
@@ -106,6 +109,8 @@ public final class DatsuzeiClient implements MinecraftClient {
 
     public void onStop() {
         logger.info("Stopping Datsuzei Client");
+
+        FileManager.getSingleton().save();
     }
 
     public static DatsuzeiClient getSingleton() {
